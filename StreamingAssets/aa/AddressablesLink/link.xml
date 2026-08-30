@@ -9,6 +9,7 @@
     <type fullname="MergeLatai.UIEnergyShopDialog" preserve="all" />
     <type fullname="MergeLatai.UIGameView" preserve="all" />
     <type fullname="MergeLatai.UIGeneratorGuideDialog" preserve="all" />
+    <type fullname="MergeLatai.UIGoalDialog" preserve="all" />
     <type fullname="MergeLatai.UIItemDetailPanel" preserve="all" />
     <type fullname="MergeLatai.UIItemGuideDialog" preserve="all" />
     <type fullname="MergeLatai.UIItemGuideSlot" preserve="all" />
