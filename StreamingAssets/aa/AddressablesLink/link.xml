@@ -13,8 +13,10 @@
     <type fullname="MergeLatai.UIItemDetailPanel" preserve="all" />
     <type fullname="MergeLatai.UIItemGuideDialog" preserve="all" />
     <type fullname="MergeLatai.UIItemGuideSlot" preserve="all" />
+    <type fullname="MergeLatai.UIPressFeedback" preserve="all" />
     <type fullname="MergeLatai.UIProfileDialog" preserve="all" />
     <type fullname="MergeLatai.UIRewardEntryView" preserve="all" />
+    <type fullname="MergeLatai.UIShopCard" preserve="all" />
     <type fullname="MergeLatai.UIShopDialog" preserve="all" />
     <type fullname="MergeLatai.UIStageRewardDialog" preserve="all" />
     <type fullname="MergeLatai.UIStageTimer" preserve="all" />
@@ -22,6 +24,7 @@
     <type fullname="MergeLatai.UIStoryStartDialog" preserve="all" />
     <type fullname="MergeLatai.UIStoryView" preserve="all" />
     <type fullname="MergeLatai.UITapArea" preserve="all" />
+    <type fullname="MergeLatai.UITimeUpDialog" preserve="all" />
     <type fullname="MergeLatai.UITopHud" preserve="all" />
     <type fullname="MergeLatai.UIWarehouseDialog" preserve="all" />
     <type fullname="MergeLatai.UIWarehouseDropZone" preserve="all" />
@@ -71,7 +74,9 @@
     <type fullname="UnityEngine.UI.GridLayoutGroup" preserve="all" />
     <type fullname="UnityEngine.UI.HorizontalLayoutGroup" preserve="all" />
     <type fullname="UnityEngine.UI.Image" preserve="all" />
+    <type fullname="UnityEngine.UI.LayoutElement" preserve="all" />
     <type fullname="UnityEngine.UI.Mask" preserve="all" />
+    <type fullname="UnityEngine.UI.RectMask2D" preserve="all" />
     <type fullname="UnityEngine.UI.ScrollRect" preserve="all" />
     <type fullname="UnityEngine.UI.VerticalLayoutGroup" preserve="all" />
     <type fullname="UnityEngine.UI.AnimationTriggers" preserve="nothing" serialized="true" />
