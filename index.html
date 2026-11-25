@@ -52,12 +52,12 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/WebGL.loader.js";
+      var loaderUrl = buildUrl + "/3b79744aa2b73d67ff8377796df5cbea.loader.js";
       var config = {
         arguments: [],
-        dataUrl: buildUrl + "/WebGL.data.unityweb",
-        frameworkUrl: buildUrl + "/WebGL.framework.js.unityweb",
-        codeUrl: buildUrl + "/WebGL.wasm.unityweb",
+        dataUrl: buildUrl + "/4eaa82b1bafd751b5a1b580d5cf56fb7.data.unityweb",
+        frameworkUrl: buildUrl + "/3babae02b35682d1b9260bfb21b39949.framework.js.unityweb",
+        codeUrl: buildUrl + "/f9ad8a4c81b8f2902822220037612d16.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "merge-latai",
@@ -110,6 +110,58 @@
 
       document.querySelector("#unity-loading-bar").style.display = "block";
 
+      // [dev 전용] 새 빌드가 배포되면 이 기기에 남은 옛 데이터를 전부 지우고 시작한다.
+      // 빌드 파일 캐시와 세이브(save.json, PlayerPrefs)까지 지운다. 옛 데이터가 새 빌드와 섞여 실행이 깨지는
+      // 기기가 있는데, 테스터 기기는 직접 볼 수 없어서 배포마다 깨끗이 시작하게 한다.
+      // CIBuild가 -env dev일 때만 CLEAR_CACHE_ON_UPDATE를 "true"로 채운다.
+      // live에서는 절대 켜지 마라. 배포할 때마다 유저 진행이 사라진다.
+      var clearCacheOnUpdate = "true" === "true";
+      var buildVersionKey = "mergeLatai.buildVersion"; // 이 기기가 마지막으로 실행한 빌드 버전
+
+      // 빌드 폴더의 version.txt(CIBuild가 매 빌드마다 씀). 캐시를 거치지 않고 항상 서버에서 읽는다.
+      function getBuildVersion() {
+        return fetch("version.txt?t=" + Date.now(), { cache: "no-store" })
+          .then((response) => response.ok ? response.text() : "")
+          .then((text) => text.trim())
+          .catch(() => "");
+      }
+
+      // 다른 탭이 DB를 열고 있으면(blocked) 삭제가 그 탭이 닫힐 때까지 미뤄진다. 기다리지 않고 진행한다.
+      function deleteDatabase(name) {
+        return new Promise((resolve) => {
+          try {
+            var request = indexedDB.deleteDatabase(name);
+            request.onsuccess = request.onerror = request.onblocked = () => resolve();
+          } catch (e) {
+            resolve();
+          }
+        });
+      }
+
+      // UnityCache = 빌드 데이터·번들 캐시, /idbfs = persistentDataPath(세이브)와 PlayerPrefs
+      function clearStoredData() {
+        var tasks = [deleteDatabase("UnityCache"), deleteDatabase("/idbfs")];
+        if (window.caches) {
+          tasks.push(caches.keys().then((keys) => Promise.all(keys.map((key) => caches.delete(key)))).catch(() => {}));
+        }
+        return Promise.all(tasks);
+      }
+
+      // 버전이 다르거나(새 배포) 처음 보는 기기면 지운다. version.txt를 못 읽으면 아무것도 지우지 않는다.
+      function checkBuildVersion() {
+        if (!clearCacheOnUpdate) return Promise.resolve();
+        return getBuildVersion().then((version) => {
+          if (!version) return;
+          var lastVersion = null;
+          try { lastVersion = localStorage.getItem(buildVersionKey); } catch (e) {}
+          if (lastVersion === version) return;
+          console.log("[BuildVersion] " + lastVersion + " -> " + version + ", 저장된 데이터를 지웁니다.");
+          return clearStoredData().then(() => {
+            try { localStorage.setItem(buildVersionKey, version); } catch (e) {}
+          });
+        });
+      }
+
       var script = document.createElement("script");
       script.src = loaderUrl;
       script.onload = () => {
@@ -126,7 +178,8 @@
               });
             };
 
-      document.body.appendChild(script);
+      // 버전 확인(dev면 필요 시 삭제)이 끝난 뒤에 Unity 로더를 붙인다. 지우기 전에 Unity가 옛 데이터를 열면 안 된다.
+      checkBuildVersion().then(() => document.body.appendChild(script));
 
     </script>
   </body>
